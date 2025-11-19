@@ -36,8 +36,8 @@ public:
 
 int main()
 {
-  double tend = 4*M_PI;
-  int steps = 100;
+  double tend = 10*M_PI;
+  int steps = 1000;
   double tau = tend/steps;
 
   Vector<> y = { 1, 0 };  // initializer list
