@@ -6,6 +6,23 @@ The equation is defined by the right hand side function.
 ASC-ODE provides various time-steppers which may be used for odes with right hand sides
 given by a function object.
 
+## Installation (TBD)
+
+install XXX-odesolver it via git-clone:
+
+    git clone https://github.com/my-github-clone/my-ode-solver.git
+
+
+To configure and build some tests do
+
+    cd my-ode-solver
+    mkdir build
+    cd build
+    cmake ..
+    make
+
+## Mass spring system
+
 A small demo for solving a mass-spring model as first order ODE
 $ \begin{matrix}
 y_0^\prime & = & y_1 \\
@@ -35,7 +52,7 @@ for (int i = 0; i < steps; i++)
 ```    
 
 
-The result of this simulation in phase space is shown below, where a comparison between the three stepper methods, the explicit Euler, the implicit Euler, and the improved Euler method, has been made:
+The result of this simulation in time and phase space is shown below, where a comparison between the three stepper methods, the explicit Euler, the implicit Euler, and the improved Euler method, has been made:
 
 
 <p align="center">
@@ -85,28 +102,98 @@ Below, a plot of the explicit Euler method can be seen with a step number of 100
 
 Increasing the end time for the simulations results in the implicit or explicit methods diverging from the desired result (harmonic oscillation) even further. When the step number is increased dramatically, this effect is reduced.
 
-
-## Installation
-
-install XXX-odesolver it via git-clone:
-
-    git clone https://github.com/my-github-clone/my-ode-solver.git
-
-
-To configure and build some tests do
-
-    cd my-ode-solver
-    mkdir build
-    cd build
-    cmake ..
-    make
     
 
 ## Available time-stepping methods are
 
-- Implicit Euler
-- Explicit Euler
-- Improved Euler
+
+#### Explicit Euler
+```cpp
+class ExplicitEuler : public TimeStepper
+  {
+    Vector<> m_vecf;
+  public:
+    ExplicitEuler(std::shared_ptr<NonlinearFunction> rhs) 
+    : TimeStepper(rhs), m_vecf(rhs->dimF()) {}
+    void DoStep(double tau, VectorView<double> y) override
+    {
+      this->m_rhs->evaluate(y, m_vecf);
+      y += tau * m_vecf;
+    }
+  };
+```
+
+#### Implicit Euler
+```cpp
+class ImplicitEuler : public TimeStepper
+  {
+    std::shared_ptr<NonlinearFunction> m_equ;
+    std::shared_ptr<Parameter> m_tau;
+    std::shared_ptr<ConstantFunction> m_yold;
+  public:
+    ImplicitEuler(std::shared_ptr<NonlinearFunction> rhs) 
+    : TimeStepper(rhs), m_tau(std::make_shared<Parameter>(0.0)) 
+    {
+      m_yold = std::make_shared<ConstantFunction>(rhs->dimX());
+      auto ynew = std::make_shared<IdentityFunction>(rhs->dimX());
+      m_equ = ynew - m_yold - m_tau * m_rhs;
+    }
+
+    void DoStep(double tau, VectorView<double> y) override
+    {
+      m_yold->set(y);
+      m_tau->set(tau);
+      NewtonSolver(m_equ, y);
+    }
+  };
+```
+
+#### Improved Euler:
+```cpp
+  class ImprovedEuler : public TimeStepper // improved Euler method
+  {
+    Vector<> m_vecf; // f evaluated at current step
+    Vector<> m_ytilde; // intermediate value
+  public:
+    ImprovedEuler(std::shared_ptr<NonlinearFunction> rhs) 
+    : TimeStepper(rhs), m_vecf(rhs->dimF()), m_ytilde(rhs->dimX()) {} // constructor
+    void DoStep(double tau, VectorView<double> y) override // perform one time step
+    {
+      this->m_rhs->evaluate(y, m_vecf); // evaluate f(y_n)
+      m_ytilde = y + (tau/2.0) * m_vecf; // compute y_tilde
+      this->m_rhs->evaluate(m_ytilde, m_vecf); // evaluate f(y_tilde)
+      y += tau * m_vecf; // update y to y_{n+1}
+    }
+  };  
+```
+
+#### Crank-Nicolson:
+```cpp
+class CrankNicolson : public TimeStepper
+  {
+    std::shared_ptr<NonlinearFunction> m_equ; // nonlinear equation to solve
+    std::shared_ptr<Parameter> m_tau; // time step size parameter
+    std::shared_ptr<ConstantFunction> m_yold; // previous time step value
+    std::shared_ptr<ConstantFunction> m_fold; // f evaluated at previous step
+  public:
+    CrankNicolson(std::shared_ptr<NonlinearFunction> rhs) // constructor
+    : TimeStepper(rhs), m_tau(std::make_shared<Parameter>(0.0))  // initialize time step size parameter
+    {
+      m_yold = std::make_shared<ConstantFunction>(rhs->dimX()); // previous time step value initialized as constant function
+      auto ynew = std::make_shared<IdentityFunction>(rhs->dimX()); // current time step value initialized as identity
+      m_fold = std::make_shared<ConstantFunction>(rhs->dimF()); // f evaluated at previous step initialized as constant function
+      m_equ = ynew - m_yold - m_tau * (m_rhs + m_fold); // crank-nicolson equation
+    }
+
+    void DoStep(double tau, VectorView<double> y) override
+    {
+      m_yold->set(y); // set yold to previous y value
+      this->m_rhs->evaluate(y, m_fold->get()); // evaluate f at previous y value
+      m_tau->set(tau/2.0); // set time step size parameter to tau/2
+      NewtonSolver(m_equ, y); // set y to solution of nonlinear equation
+    }
+  };
+```
 
 
 
