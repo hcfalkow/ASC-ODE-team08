@@ -72,7 +72,15 @@ namespace ASC_ode
       this->m_rhs->evaluate(m_ytilde, m_vecf); // evaluate f(y_tilde)
       y += tau * m_vecf; // update y to y_{n+1}
     }
-  };  
+  };
+
+  // Crank-Nicolson:
+  // y_{i+1} = y_i + tau/2 * (f(t_i, y_i) + f(t_{i+1}, y_{i+1}))
+  class CrankNicolson : public TimeStepper
+  {
+
+  };
+
 
 }
 
