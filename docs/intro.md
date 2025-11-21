@@ -58,32 +58,32 @@ The result of this simulation in time and phase space is shown below, where a co
 
 
 <p align="center">
-  <img src="pictures/test_ode_results/explicit_1000_sim.png" width="600">
+  <img src="pictures/test_ode_results/mass/explicit_1000_sim.png" width="600">
   <br>
   <em>Figure 1: Explicit Euler with 1000 steps simulation</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/explicit_1000_phase.png" width="600">
+  <img src="pictures/test_ode_results/mass/explicit_1000_phase.png" width="600">
   <br>
   <em>Figure 2: Explicit Euler with 1000 steps phase diagram</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/implicit_1000_sim.png" width="600">
+  <img src="pictures/test_ode_results/mass/implicit_1000_sim.png" width="600">
   <br>
   <em>Figure 3: Implicit Euler with 1000 steps simulation</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/implicit_1000_phase.png" width="600">
+  <img src="pictures/test_ode_results/mass/implicit_1000_phase.png" width="600">
   <br>
   <em>Figure 4: Implicit Euler with 1000 steps phase diagram</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/improved_1000_sim.png" width="600">
+  <img src="pictures/test_ode_results/mass/improved_1000_sim.png" width="600">
   <br>
   <em>Figure 5: Improved Euler with 1000 steps simulation</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/improved_1000_phase.png" width="600">
+  <img src="pictures/test_ode_results/mass/improved_1000_phase.png" width="600">
   <br>
   <em>Figure 6: Improved Euler with 1000 steps phase diagram</em>
 </p>
@@ -92,12 +92,12 @@ As the spring mass model does not include any damping, it is expected that the s
 Below, a plot of the explicit Euler method can be seen with a step number of 10000, which ensures that the solution converges to a harmonic oscillation:
 
 <p align="center">
-  <img src="pictures/test_ode_results/explicit_100000_sim.png" width="600">
+  <img src="pictures/test_ode_results/mass/explicit_100000_sim.png" width="600">
   <br>
   <em>Figure 7: Explicit Euler with 100000 steps simulation</em>
 </p>
 <p align="center">
-  <img src="pictures/test_ode_results/explicit_100000_phase.png" width="600">
+  <img src="pictures/test_ode_results/mass/explicit_100000_phase.png" width="600">
   <br>
   <em>Figure 8: Explicit Euler with 100000 steps phase diagram</em>
 </p>
@@ -110,9 +110,18 @@ In exercise 17.4.1, the Crank-Nicolson method for time stepping is also implemen
 
 $$y_{i+1} = y_i + \frac{\tau}{2}(f(t_i, y_i) + f(t_{i+1}, y_{i+1})), \quad 0 \le i < n$$
 The C++ implementation can be seen below in the section **Available time-stepping methods**.
-When using the Crank-Nicolson method on the spring mass system it becomes evident that it converges much faster than the explicit and implicit Euler methods and requires a significantly smaller number of steps.
+When using the Crank-Nicolson method on the spring mass system it becomes evident that it converges much faster than the explicit and implicit Euler methods and requires a significantly smaller number of steps. Below, a simulation of the mass spring system using the Crank-Nicolson method with only 100 steps is shown. The method is robust and converges very fast.
 
-**ADD PICTURES OF SIMULATIONS???**
+<p align="center">
+  <img src="pictures/test_ode_results/mass/crank_100_sim.png" width="600">
+  <br>
+  <em>Figure 9: Crank-Nicolson with 100 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/mass/crank_100_phase.png" width="600">
+  <br>
+  <em>Figure 10: Crank-Nicolson with 100 steps phase diagram</em>
+</p>
 
 **RC Circuit implementation**
 

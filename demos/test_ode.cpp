@@ -66,7 +66,7 @@ public:
 
 int main()
 {
-  double tend = 1*M_PI;
+  double tend = 0.1*M_PI;
   int steps = 1000;
   double tau = tend/steps;
 
