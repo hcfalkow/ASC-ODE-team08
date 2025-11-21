@@ -42,6 +42,7 @@ shared_ptr<NonlinearFunction> rhs = std::make_shared<MassSpring>(mass, stiffness
 ExplicitEuler stepper(rhs);
 // ImplicitEuler stepper(rhs);
 // ImprovedEuler stepper(rhs);
+// CrankNicolson stepper(rhs);
 
 std::cout << 0.0 << "  " << y(0) << " " << y(1) << std::endl;
 for (int i = 0; i < steps; i++)
@@ -51,6 +52,7 @@ for (int i = 0; i < steps; i++)
   }
 ```    
 
+#### Exercise 17.2.2
 
 The result of this simulation in time and phase space is shown below, where a comparison between the three stepper methods, the explicit Euler, the implicit Euler, and the improved Euler method, has been made:
 
@@ -102,9 +104,54 @@ Below, a plot of the explicit Euler method can be seen with a step number of 100
 
 Increasing the end time for the simulations results in the implicit or explicit methods diverging from the desired result (harmonic oscillation) even further. When the step number is increased dramatically, this effect is reduced.
 
+#### Exercise 17.4.1
     
+In exercise 17.4.1, the Crank-Nicolson method for time stepping is also implemented.
 
-## Available time-stepping methods are
+$$y_{i+1} = y_i + \frac{\tau}{2}(f(t_i, y_i) + f(t_{i+1}, y_{i+1})), \quad 0 \le i < n$$
+The C++ implementation can be seen below in the section **Available time-stepping methods**.
+When using the Crank-Nicolson method on the spring mass system it becomes evident that it converges much faster than the explicit and implicit Euler methods and requires a significantly smaller number of steps.
+
+**ADD PICTURES OF SIMULATIONS???**
+
+**RC Circuit implementation**
+
+The RC circuit is modelled as:
+$$\frac{dU_C}{dt} = \frac{U_0 - U_C}{RC}$$
+
+as the rhs of the equation depends on time $t$, as $U_0 = cos(\omega t)$, where $\omega = 100\pi$, this is not a *autonomous* ODE. It can be made autonomous by adding time $t$ as a state $x_2$, where $x_1$ is $U_C$. The RC circuit is implemented in C++:
+
+```cpp
+class RCCircuit : public NonlinearFunction
+{
+private:
+  double resistance;
+  double capacitance;
+  double omega;
+
+public:
+  RCCircuit(double R, double C, double w) : resistance(R), capacitance(C), omega(w) {}
+
+  size_t dimX() const override { return 2; } // make autonomous by adding time as a variable
+  size_t dimF() const override { return 2; }
+
+  void evaluate (VectorView<double> x, VectorView<double> f) const override
+  {
+    f(0) = (cos(omega * x(1)) - x(0)) / (resistance * capacitance); // dUc/dt
+    f(1) = 1.0; // dt/dt = 1
+  }
+  void evaluateDeriv (VectorView<double> x, MatrixView<double> df) const override
+  {
+    df = 0.0; // reset
+    df(0,0) = -1.0 / (resistance * capacitance); // d(dUc/dt)/d(Uc)
+    df(0,1) = -omega * sin(omega * x(1)) / (resistance * capacitance); // d(dUc/dt)/d(t)
+    df(1,1) = 0.0; // d(dt/dt)/d(t)
+  }
+};
+```
+
+
+## Available time-stepping methods
 
 
 #### Explicit Euler
