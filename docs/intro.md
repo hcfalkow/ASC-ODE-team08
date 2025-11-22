@@ -159,6 +159,42 @@ public:
 };
 ```
 
+The RC Circuit ODE is solved numerically with the three methods, explicit Euler, implicit Euler and Crank-Nicolson, at time steps 500 and 2000, for a total time of $t_{end} = 0.1\pi$:
+
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_explicit_500.png" width="600">
+  <br>
+  <em>Figure 11: RC ODE: Explicit Euler with 500 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_implicit_500.png" width="600">
+  <br>
+  <em>Figure 12: RC ODE: Implicit Euler with 500 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_crank_500.png" width="600">
+  <br>
+  <em>Figure 13: RC ODE: Crank-Nicolson with 500 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_explicit_2000.png" width="600">
+  <br>
+  <em>Figure 14: RC ODE: Explicit Euler with 2000 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_implicit_2000.png" width="600">
+  <br>
+  <em>Figure 15: RC ODE: Implicit Euler with 2000 steps simulation</em>
+</p>
+<p align="center">
+  <img src="pictures/test_ode_results/RC/RC_crank_2000.png" width="600">
+  <br>
+  <em>Figure 16: RC ODE: Crank-Nicolson with 2000 steps simulation</em>
+</p>
+
+As evident from the i simulations below, the explicit Euler is unstable for low step numbers and needs a significantly higher step number to converge.
+Implicit Euler and Crank-Nicolson are both stable at low step numbers and exert stable behaviour.
+
 
 ## Available time-stepping methods
 

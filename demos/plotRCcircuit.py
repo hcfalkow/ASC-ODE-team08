@@ -14,11 +14,11 @@ plt.grid()
 plt.show()
 
 
-plt.plot(data[:,1], data[:,2], label='phase plot')
-plt.xlabel('Uc')
-plt.ylabel('t')
-plt.title('RC Circuit Phase Plot')
-plt.legend()
-plt.grid()
-plt.show()
+# plt.plot(data[:,1], data[:,2], label='phase plot')
+# plt.xlabel('Uc')
+# plt.ylabel('t')
+# plt.title('RC Circuit Phase Plot')
+# plt.legend()
+# plt.grid()
+# plt.show()
 

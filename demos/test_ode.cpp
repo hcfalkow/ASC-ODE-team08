@@ -67,12 +67,13 @@ public:
 int main()
 {
   double tend = 0.1*M_PI;
-  int steps = 1000;
+  int steps = 2000;
   double tau = tend/steps;
 
   Vector<> y = { 1, 0 };  // initializer list
   // auto rhs = std::make_shared<MassSpring>(1.0, 1.0);
   auto rhs = std::make_shared<RCCircuit>(100, 1e-6, 100*M_PI);
+  // auto rhs = std::make_shared<RCCircuit>(1, 1, 100*M_PI);
   
   // ExplicitEuler stepper(rhs);
   // ImplicitEuler stepper(rhs);
