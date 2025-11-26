@@ -89,6 +89,8 @@ int main()
 
   // // ExplicitEuler stepper(rhs);
   // ImplicitEuler stepper(rhs);
+  // ImprovedEuler stepper(rhs);
+  // CrankNicolson stepper(rhs);
 
   // RungeKutta stepper(rhs, Gauss2a, Gauss2b, Gauss2c);
 
@@ -116,9 +118,6 @@ int main()
   auto [a, b] = ComputeABfromC(c);
   ImplicitRungeKutta stepper(rhs, a, b, c);
   */
-
-  // ImprovedEuler stepper(rhs);
-  CrankNicolson stepper(rhs);
 
   std::ofstream outfile ("output_test_ode.txt");
   std::cout << 0.0 << "  " << y(0) << " " << y(1) << std::endl;
