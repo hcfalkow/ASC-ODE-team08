@@ -27,28 +27,28 @@ int main()
 {
   // calculate lengendre polynomials of order n and their derivatives at x for x in range [-1,1] with k steps.
   // print the results to a file "legendre_output.txt"
-  double x_start = -1.0;
-  double x_end = 1.0;
+  double x_start = -1.0; // start of range
+  double x_end = 1.0; // end of range
   int n = 5; // order of legendre polynomial
   int k = 100; // number of steps
-  double step = (x_end - x_start) / k;
+  double step = (x_end - x_start) / k; // step size
   std::ofstream outfile("legendre_output.txt");
   for (int i = 0; i <= k; ++i) {
     double x = x_start + i * step;
-    AutoDiff<1> adx = Variable<0>(x);
-    std::vector<AutoDiff<1>> adP;
-    LegendrePolynomials(n, adx, adP);
+    AutoDiff<1> adx = Variable<0>(x); // create AutoDiff variable for x
+    std::vector<AutoDiff<1>> adP; // vector to hold legendre polynomials as AutoDiff objects
+    LegendrePolynomials(n, adx, adP); // compute legendre polynomials
     outfile << x;
     for (int j = 0; j <= n; ++j) {
       outfile << " " << adP[j].value() << " " << derivative(adP[j], 0);
-      std::cout << adP[j].value() << "\n";
+      std::cout << "P at x = " << x << " : " << adP[j].value() << "\n";
+      // extract only final derivative value depending on x and print to cout
+      std::cout << "Derivative of P_" << j << " at x = " << x << ": " << derivative(adP[j], 0) << std::endl;
+      // print current line of outfile to cout:
     }
     outfile << std::endl;
   }
   outfile.close();
-
-
-
   return 0;
 }
 
