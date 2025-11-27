@@ -24,10 +24,11 @@ To configure and build some tests do
 ## Mass spring system
 
 A small demo for solving a mass-spring model as first order ODE
-$ \begin{matrix}
-y_0^\prime & = & y_1 \\
-y_1^\prime & = & -\frac{k}{m} y_0
-\end{matrix} $
+
+$$\begin{aligned}
+y_0' &= y_1 \\
+y_1' &= -\frac{k}{m} y_0
+\end{aligned}$$
 is here:
 
 ```cpp
@@ -57,38 +58,58 @@ for (int i = 0; i < steps; i++)
 The result of this simulation in time and phase space is shown below, where a comparison between the three stepper methods, the explicit Euler, the implicit Euler, and the improved Euler method, has been made:
 
 
-![Figure 1: Explicit Euler with 1000 steps simulation](pictures/test_ode_results/mass/explicit_1000_sim.png){width="600px" style="display:block;margin:auto"}
+
+```{image} pictures/test_ode_results/mass/explicit_1000_sim.png
+:width: 600px
+:align: center
+```
 *Figure 1: Explicit Euler with 1000 steps simulation*
 
-
-![Figure 2: Explicit Euler with 1000 steps phase diagram](pictures/test_ode_results/mass/explicit_1000_phase.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/explicit_1000_phase.png
+:width: 600px
+:align: center
+```
 *Figure 2: Explicit Euler with 1000 steps phase diagram*
 
-
-![Figure 3: Implicit Euler with 1000 steps simulation](pictures/test_ode_results/mass/implicit_1000_sim.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/implicit_1000_sim.png
+:width: 600px
+:align: center
+```
 *Figure 3: Implicit Euler with 1000 steps simulation*
 
-
-![Figure 4: Implicit Euler with 1000 steps phase diagram](pictures/test_ode_results/mass/implicit_1000_phase.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/implicit_1000_phase.png
+:width: 600px
+:align: center
+```
 *Figure 4: Implicit Euler with 1000 steps phase diagram*
 
-
-![Figure 5: Improved Euler with 1000 steps simulation](pictures/test_ode_results/mass/improved_1000_sim.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/improved_1000_sim.png
+:width: 600px
+:align: center
+```
 *Figure 5: Improved Euler with 1000 steps simulation*
 
-
-![Figure 6: Improved Euler with 1000 steps phase diagram](pictures/test_ode_results/mass/improved_1000_phase.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/improved_1000_phase.png
+:width: 600px
+:align: center
+```
 *Figure 6: Improved Euler with 1000 steps phase diagram*
+
 
 
 As the spring mass model does not include any damping, it is expected that the system performs a harmonic oscillation. It was found that if the number of steps was chosen too low for either the explicit Euler or the implicit Euler method, the solution would diverge and either be unstable or yield a damped system. Increasing the number of steps fixed this issue. The improved Euler method was far more robust and could handle lower step numbers and still yield a correct response.
 Below, a plot of the explicit Euler method can be seen with a step number of 10000, which ensures that the solution converges to a harmonic oscillation:
 
-![Figure 7: Explicit Euler with 100000 steps simulation](pictures/test_ode_results/mass/explicit_100000_sim.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/explicit_100000_sim.png
+:width: 600px
+:align: center
+```
 *Figure 7: Explicit Euler with 100000 steps simulation*
 
-
-![Figure 8: Explicit Euler with 100000 steps phase diagram](pictures/test_ode_results/mass/explicit_100000_phase.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/explicit_100000_phase.png
+:width: 600px
+:align: center
+```
 *Figure 8: Explicit Euler with 100000 steps phase diagram*
 
 
@@ -102,16 +123,24 @@ $$y_{i+1} = y_i + \frac{\tau}{2}(f(t_i, y_i) + f(t_{i+1}, y_{i+1})), \quad 0 \le
 The C++ implementation can be seen below in the section **Available time-stepping methods**.
 When using the Crank-Nicolson method on the spring mass system it becomes evident that it converges much faster than the explicit and implicit Euler methods and requires a significantly smaller number of steps. Below, a simulation of the mass spring system using the Crank-Nicolson method with only 100 steps is shown. The method is robust and converges very fast.
 
-![](pictures/test_ode_results/mass/crank_100_sim.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/crank_100_sim.png
+:width: 600px
+:align: center
+```
 *Figure 9: Crank-Nicolson with 100 steps simulation*
 
-![](pictures/test_ode_results/mass/crank_100_phase.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/mass/crank_100_phase.png
+:width: 600px
+:align: center
+```
 *Figure 10: Crank-Nicolson with 100 steps phase diagram*
 
 
-**RC Circuit implementation**
+
+### RC Circuit implementation
 
 The RC circuit is modelled as:
+
 $$\frac{dU_C}{dt} = \frac{U_0 - U_C}{RC}$$
 
 as the rhs of the equation depends on time $t$, as $U_0 = cos(\omega t)$, where $\omega = 100\pi$, this is not a *autonomous* ODE. It can be made autonomous by adding time $t$ as a state $x_2$, where $x_1$ is $U_C$. The RC circuit is implemented in C++:
@@ -147,22 +176,40 @@ public:
 
 The RC Circuit ODE is solved numerically with the three methods, explicit Euler, implicit Euler and Crank-Nicolson, at time steps 500 and 2000, for a total time of $t_{end} = 0.1\pi$:
 
-![](pictures/test_ode_results/RC/RC_explicit_500.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_explicit_500.png
+:width: 600px
+:align: center
+```
 *Figure 11: RC ODE: Explicit Euler with 500 steps simulation*
 
-![](pictures/test_ode_results/RC/RC_implicit_500.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_implicit_500.png
+:width: 600px
+:align: center
+```
 *Figure 12: RC ODE: Implicit Euler with 500 steps simulation*
 
-![](pictures/test_ode_results/RC/RC_crank_500.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_crank_500.png
+:width: 600px
+:align: center
+```
 *Figure 13: RC ODE: Crank-Nicolson with 500 steps simulation*
 
-![](pictures/test_ode_results/RC/RC_explicit_2000.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_explicit_2000.png
+:width: 600px
+:align: center
+```
 *Figure 14: RC ODE: Explicit Euler with 2000 steps simulation*
 
-![](pictures/test_ode_results/RC/RC_implicit_2000.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_implicit_2000.png
+:width: 600px
+:align: center
+```
 *Figure 15: RC ODE: Implicit Euler with 2000 steps simulation*
 
-![](pictures/test_ode_results/RC/RC_crank_2000.png){width="600px" style="display:block;margin:auto"}
+```{image} pictures/test_ode_results/RC/RC_crank_2000.png
+:width: 600px
+:align: center
+```
 *Figure 16: RC ODE: Crank-Nicolson with 2000 steps simulation*
 
 
