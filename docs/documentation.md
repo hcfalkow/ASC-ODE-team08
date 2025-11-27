@@ -53,6 +53,8 @@ for (int i = 0; i < steps; i++)
   }
 ```    
 
+The following chapters will go through how to use the library, as wel as provide solutions to some exercises.
+
 ### Exercise 17.2.2
 
 The result of this simulation in time and phase space is shown below, where a comparison between the three stepper methods, the explicit Euler, the implicit Euler, and the improved Euler method, has been made:
@@ -308,8 +310,188 @@ class CrankNicolson : public TimeStepper
   };
 ```
 
+## AutoDiff differentiation method
+
+A class *AutoDiff* for automatic differetiation was implemented. 
+
+```cpp
+template <size_t N, typename T = double>
+  class AutoDiff
+  {
+  private:
+    T m_val;
+    std::array<T, N> m_deriv;
+  public: 
+    AutoDiff () : m_val(0), m_deriv{} {}
+    AutoDiff (T v) : m_val(v), m_deriv{} 
+    {
+      for (size_t i = 0; i < N; i++)
+        m_deriv[i] = derivative(v, i);
+    }
+    
+    template <size_t I>
+    AutoDiff (Variable<I, T> var) : m_val(var.value()), m_deriv{} 
+    {
+      m_deriv[I] = 1.0;
+    }
+
+    T value() const { return m_val; }
+    std::array<T, N>& deriv() { return m_deriv; }
+    const std::array<T, N>& deriv() const { return m_deriv; }
+  };
+```
+
+### Exercises 18.4
+
+#### Operators
+This class was extended with several functionalities. 
+The essential operators $+$, $-$, $*$ and $/$ were implemented as operator overloads:
+```cpp
+// "+" operator for two AutoDiff objects:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator+ (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b)
+  {
+    AutoDiff<N, T> result(a.value() + b.value());
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = a.deriv()[i] + b.deriv()[i];
+    return result;
+  }
+
+  
+  template <size_t N, typename T = double>
+  auto operator+ (T a, const AutoDiff<N, T>& b) { return AutoDiff<N, T>(a) + b; }
+
+   // "-" operator for two AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator- (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b)
+  {
+    AutoDiff<N, T> result(a.value() - b.value());
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = a.deriv()[i] - b.deriv()[i];
+    return result;
+  }
+
+  // "-" operator for one AutoDiff object and one scalar - own implementation:
+  template <size_t N, typename T = double>
+  auto operator- (T a, const AutoDiff<N, T>& b) { return AutoDiff<N, T>(a) - b; }
 
 
+  // "*" operator for two AutoDiff objects:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator* (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b)
+  {
+    AutoDiff<N, T> result(a.value() * b.value());
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = a.deriv()[i] * b.value() + a.value() * b.deriv()[i];
+    return result;
+  }
 
+  // "/" operator for two AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator/ (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b)
+  {
+    AutoDiff<N, T> result(a.value() / b.value());
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = (a.deriv()[i] * b.value() - a.value() * b.deriv()[i]) / (b.value() * b.value());
+    return result;
+  }
+```
+#### Functions
+Afterwards, additional basic functions were added to the class: $sin$, $cos$, $exp$, $log$, $pow$, and $sqrt$:
 
-   
+```cpp
+// sin function for AutoDiff objects:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> sin(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(sin(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = cos(a.value()) * a.deriv()[i];
+    return result;
+  }
+
+  // cos function for AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> cos(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(cos(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = -sin(a.value()) * a.deriv()[i];
+    return result;
+  }
+
+  // exp function for AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> exp(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(exp(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = exp(a.value()) * a.deriv()[i];
+    return result;
+  }
+
+  // log function for AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> log(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(log(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = (1 / a.value()) * a.deriv()[i];
+    return result;
+  }
+
+  // pow function for AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> pow(const AutoDiff<N, T> &a, T n)
+  {
+    AutoDiff<N, T> result(pow(a.value(), n));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = n * pow(a.value(), n - 1) * a.deriv()[i];
+    return result;
+  }
+
+  // sqrt function for AutoDiff objects - own implementation:
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> sqrt(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(sqrt(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = (1 / (2 * sqrt(a.value())) ) * a.deriv()[i];
+    return result;
+  }
+```
+
+#### Legendre polynomials
+
+To test the implementation of the AutoDiff class, as well as some of the functions and operators, several Legendre polynomials were implemented, with a function defined as:
+
+```cpp
+template <typename T>
+void LegendrePolynomials(int n, T x, std::vector<T>& P) {
+    if (n < 0) {
+        P.clear();
+        return;
+    }
+    P.resize(n + 1);
+    P[0] = T(1);
+    if (n == 0) return;
+    P[1] = x;
+    for (int k = 2; k <= n; ++k) {
+        P[k] = ((T(2 * k - 1) * x * P[k - 1]) - T(k - 1) * P[k - 2]) / T(k);
+    }
+}
+```
+
+The polynomials and their derivatives were plotted up to a order of $n$, in the range of $x\in[-1,1]$ with 100 steps:
+
+```{image} pictures/legendre_order5_plot.png
+:width: 600px
+:align: center
+```
+*Figure 17: Legendre polynomials and their derivatives up to 5th order.*
+
+```{image} pictures/test_ode_results/RC/RC_crank_2000.png
+:width: 600px
+:align: center
+```
+*Figure 16: RC ODE: Crank-Nicolson with 2000 steps simulation*
