@@ -67,14 +67,6 @@ Error reduces by ~16x when doubling steps (expected for 4th order: 2^4 = 16)
 
 The implicit method (6th order Gauss-Legendre) achieves much better accuracy.
 
-## Files modified/created
-
-- `src/timestepper.hpp` - added ExplicitRungeKutta class
-- `demos/test_explicit_rk.cpp` - new test file
-- `CMakeLists.txt` - added build target
-- `nanoblas/src/vecexpr.hpp` - bug fix
-
-
 ## Conclusion
 
 - Implementation works for any explicit RK method
