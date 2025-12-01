@@ -22,3 +22,9 @@ target_link_libraries (demo_legendre PUBLIC nanoblas)
 
 add_executable (test_explicit_rk demos/test_explicit_rk.cpp)
 target_link_libraries (test_explicit_rk PUBLIC nanoblas)
+
+add_library(ASC_ode INTERFACE)
+target_include_directories(ASC_ode INTERFACE src)
+
+add_executable(test_pendulum demos/test_pendulum.cpp)
+target_link_libraries(test_pendulum PRIVATE ASC_ode nanoblas)
