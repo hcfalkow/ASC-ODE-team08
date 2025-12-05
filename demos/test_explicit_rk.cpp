@@ -115,6 +115,7 @@ int main()
     run_test(stepper, "explicit_rk4", tend, steps);
   }
   {
+    // Gauss3c is defined in implicitRK.hpp (ASC_ode namespace)
     auto [Gauss3a,Gauss3b] = ComputeABfromC(Gauss3c);
     ImplicitRungeKutta stepper(rhs, Gauss3a, Gauss3b, Gauss3c);
     run_test(stepper, "implicit_gauss3", tend, steps);

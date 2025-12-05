@@ -38,6 +38,8 @@ mass_spring/.ipynb_checkpoints
 
 docs/_build
 demos/output*.txt
+output*.txt
+legendre_output.txt
 
 # exclude mac .cache files
 .DS_Store
